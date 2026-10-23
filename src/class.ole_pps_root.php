@@ -29,7 +29,7 @@ require_once "functions.ole.php";
 
 class ole_pps_root extends ole_pps {
 
-    function ole_pps_root($raTime1st=false, $raTime2nd=false, $raChild=false) {
+    public function __construct($raTime1st=false, $raTime2nd=false, $raChild=false) {
         $this->No         = false;
         $this->Name       = Asc2Ucs('Root Entry');
         $this->Type       = PpsType_Root;
@@ -47,16 +47,16 @@ class ole_pps_root extends ole_pps {
 #------------------------------------------------------------------------------
 # save (OLE::Storage_Lite::PPS::Root)
 #------------------------------------------------------------------------------
-function save($sFile, $bNoAs=false, $rhInfo=false) {
-#0.Initial Setting for saving
+public function save($sFile, $bNoAs=false, $rhInfo=false) {
+  #0.Initial Setting for saving
   if (!$rhInfo) {
     $rhInfo=new \stdClass();
   }
 
   $rhInfo->_BIG_BLOCK_SIZE=pow(2, (($rhInfo->_BIG_BLOCK_SIZE) ?
-                                  _adjust2($rhInfo->_BIG_BLOCK_SIZE) : 9));
+                                  $this->_adjust2($rhInfo->_BIG_BLOCK_SIZE) : 9));
   $rhInfo->_SMALL_BLOCK_SIZE=pow(2, (($rhInfo->_SMALL_BLOCK_SIZE) ?
-                                    _adjust2($rhInfo->_SMALL_BLOCK_SIZE) : 6));
+                                    $this->_adjust2($rhInfo->_SMALL_BLOCK_SIZE) : 6));
   $rhInfo->_SMALL_SIZE = 0x1000;
   $rhInfo->_PPS_SIZE = 0x80;
 
@@ -74,7 +74,7 @@ function save($sFile, $bNoAs=false, $rhInfo=false) {
 
   $iBlk = 0;
 #1. Make an array of PPS (for Save)
-  $aList=array();
+  $aList=[];
   $list=array(&$this);
   if($bNoAs) {
     $this->_savePpsSetPnt2($list, $aList, $rhInfo);
@@ -103,7 +103,7 @@ function save($sFile, $bNoAs=false, $rhInfo=false) {
 #------------------------------------------------------------------------------
 # _calcSize (OLE::Storage_Lite::PPS)
 #------------------------------------------------------------------------------
-function _calcSize(&$raList, $rhInfo) {
+private function _calcSize(&$raList, $rhInfo) {
 
 #0. Calculate Basic Setting
   $iSBDcnt=0;
@@ -142,15 +142,15 @@ function _calcSize(&$raList, $rhInfo) {
 #------------------------------------------------------------------------------
 # _adjust2 (OLE::Storage_Lite::PPS::Root)
 #------------------------------------------------------------------------------
-function _adjust2($i2) {
+private function _adjust2($i2) {
   $iWk = log($i2)/log(2);
-  return ($iWk > int($iWk)) ? floor($iWk)+1 : $iWk;
+  return ($iWk > intVal($iWk)) ? floor($iWk)+1 : $iWk;
 }
 
 #------------------------------------------------------------------------------
 # _saveHeader (OLE::Storage_Lite::PPS::Root)
 #------------------------------------------------------------------------------
-function _saveHeader($rhInfo, $iSBDcnt, $iBBcnt, $iPPScnt) {
+private function _saveHeader($rhInfo, $iSBDcnt, $iBBcnt, $iPPScnt) {
   $FILE = $rhInfo->_FILEH_;
 
 #0. Calculate Basic Setting
@@ -223,7 +223,7 @@ function _saveHeader($rhInfo, $iSBDcnt, $iBBcnt, $iPPScnt) {
 #------------------------------------------------------------------------------
 # _saveBigData (OLE::Storage_Lite::PPS)
 #------------------------------------------------------------------------------
-function _saveBigData(&$iStBlk, &$raList, $rhInfo) {
+private function _saveBigData(&$iStBlk, &$raList, $rhInfo) {
 
 //return;//!!!
 
@@ -245,7 +245,7 @@ function _saveBigData(&$iStBlk, &$raList, $rhInfo) {
                 $iLen = 0;
                 fseek($oPps->_PPS_FILE, 0, SEEK_SET); #To The Top
                 while ($sBuff=fread($oPps->_PPS_FILE, 4096)) {
-                    $iLen += length($sBuff);
+                    $iLen += strlen($sBuff);
                     fputs($FILE, $sBuff);           #Check for update
                 }
             } else {
@@ -271,7 +271,7 @@ function _saveBigData(&$iStBlk, &$raList, $rhInfo) {
 #------------------------------------------------------------------------------
 # _savePps (OLE::Storage_Lite::PPS::Root)
 #------------------------------------------------------------------------------
-function _savePps(&$raList, $rhInfo) 
+private function _savePps(&$raList, $rhInfo) 
 {
 #0. Initial
   $FILE = $rhInfo->_FILEH_;
@@ -293,7 +293,7 @@ function _savePps(&$raList, $rhInfo)
 # _savePpsSetPnt2 (OLE::Storage_Lite::PPS::Root)
 #  For Test
 #------------------------------------------------------------------------------
-function _savePpsSetPnt2(&$aThis, &$raList, $rhInfo) {
+private function _savePpsSetPnt2(&$aThis, &$raList, $rhInfo) {
 #1. make Array as Children-Relations
 #1.1 if No Children
   if (!is_array($aThis) || sizeof($aThis)==0) {
@@ -330,7 +330,7 @@ function _savePpsSetPnt2(&$aThis, &$raList, $rhInfo) {
 # _savePpsSetPnt2 (OLE::Storage_Lite::PPS::Root)
 #  For Test
 #------------------------------------------------------------------------------
-function _savePpsSetPnt2s(&$aThis, &$raList, $rhInfo) {
+private function _savePpsSetPnt2s(&$aThis, &$raList, $rhInfo) {
 #1. make Array as Children-Relations
 #1.1 if No Children
   if (!is_array($aThis) || sizeof($aThis)==0) {
@@ -364,7 +364,7 @@ function _savePpsSetPnt2s(&$aThis, &$raList, $rhInfo) {
 #------------------------------------------------------------------------------
 # _savePpsSetPnt (OLE::Storage_Lite::PPS::Root)
 #------------------------------------------------------------------------------
-function _savePpsSetPnt(&$aThis, &$raList, $rhInfo) {
+private function _savePpsSetPnt(&$aThis, &$raList, $rhInfo) {
 
 //print "yyy type: ".gettype($aThis)."<br>\n";
 //print "yyy name: ".$aThis[0]->Name."<br>\n";
@@ -390,8 +390,8 @@ function _savePpsSetPnt(&$aThis, &$raList, $rhInfo) {
       $aThis[$iPos]->No = sizeof($raList)-1;
       $aWk = $aThis;
 #1.3.2 Devide a array into Previous,Next
-      $aPrev = splice($aWk, 0, $iPos);
-      $aNext = splice($aWk, 1, $iCnt - $iPos - 1);
+      $aPrev = array_splice($aWk, 0, $iPos);
+      $aNext = array_splice($aWk, 1, $iCnt - $iPos - 1);
       $aThis[$iPos]->PrevPps = $this->_savePpsSetPnt($aPrev, $raList, $rhInfo);
       $aThis[$iPos]->NextPps = $this->_savePpsSetPnt($aNext, $raList, $rhInfo);
       $aThis[$iPos]->DirPps = $this->_savePpsSetPnt($aThis[$iPos]->Child, $raList, $rhInfo);
@@ -402,7 +402,7 @@ function _savePpsSetPnt(&$aThis, &$raList, $rhInfo) {
 #------------------------------------------------------------------------------
 # _savePpsSetPnt (OLE::Storage_Lite::PPS::Root)
 #------------------------------------------------------------------------------
-function _savePpsSetPnt1(&$aThis, &$raList, $rhInfo) {
+private function _savePpsSetPnt1(&$aThis, &$raList, $rhInfo) {
 #1. make Array as Children-Relations
 #1.1 if No Children
   if (!is_array($aThis) || sizeof($aThis)==0) {
@@ -424,8 +424,8 @@ function _savePpsSetPnt1(&$aThis, &$raList, $rhInfo) {
       $aThis[$iPos]->No = sizeof($raList)-1;
       $aWk = $aThis;
 #1.3.2 Devide a array into Previous,Next
-      $aPrev = splice($aWk, 0, $iPos);
-      $aNext = splice($aWk, 1, $iCnt - $iPos - 1);
+      $aPrev = array_splice($aWk, 0, $iPos);
+      $aNext = array_splice($aWk, 1, $iCnt - $iPos - 1);
       $aThis[$iPos]->PrevPps = $this->_savePpsSetPnt($aPrev, $raList, $rhInfo);
       $aThis[$iPos]->NextPps = $this->_savePpsSetPnt($aNext, $raList, $rhInfo);
       $aThis[$iPos]->DirPps = $this->_savePpsSetPnt($aThis[$iPos]->Child, $raList, $rhInfo);
@@ -436,7 +436,7 @@ function _savePpsSetPnt1(&$aThis, &$raList, $rhInfo) {
 #------------------------------------------------------------------------------
 # _saveBbd (OLE::Storage_Lite)
 #------------------------------------------------------------------------------
-function _saveBbd($iSbdSize, $iBsize, $iPpsCnt, $rhInfo) {
+private function _saveBbd($iSbdSize, $iBsize, $iPpsCnt, $rhInfo) {
   $FILE = $rhInfo->_FILEH_;
 #0. Calculate Basic Setting
   $iBbCnt = $rhInfo->_BIG_BLOCK_SIZE / LongIntSize;

@@ -29,7 +29,7 @@ require_once "functions.ole.php";
 
 class ole_pps_dir extends ole_pps {
 
-    function ole_pps_dir($sName, $raTime1st=false, $raTime2nd=false,
+    public function __construct($sName, $raTime1st=false, $raTime2nd=false,
                      $raChild=false) {
         $this->No         = false;
         $this->Name       = $sName;

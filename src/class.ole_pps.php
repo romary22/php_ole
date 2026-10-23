@@ -26,50 +26,19 @@
 
 class ole_pps {
 
-    var $No;
-    var $Name;
-    var $Type;
-    var $PrevPps;
-    var $NextPps;
-    var $DirPps;
-    var $Time1st;
-    var $Time2nd;
-    var $StartBlock;
-    var $Size;
-    var $Data;
-    var $Child;
-
-#------------------------------------------------------------------------------
-# new (OLE::Storage_Lite::PPS)
-#------------------------------------------------------------------------------
-// TODO: Do we need this function?
-/*
-function ole_pps($iNo, $sNm, $iType, $iPrev, $iNext, $iDir,
-                 $raTime1st, $raTime2nd, $iStart, $iSize,
-                 $sData=false, $raChild=false) {
-
-#1. Constructor for General Usage
-
-  if($iType == PpsType_File) { #FILE
-    return OLE::Storage_Lite::PPS::File->_new
-        ($iNo, $sNm, $iType, $iPrev, $iNext, $iDir, $raTime1st, $raTime2nd, 
-         $iStart, $iSize, $sData, $raChild);
-  }
-  elsif($iType == PpsType_Dir) { #DIRECTRY
-    return OLE::Storage_Lite::PPS::Dir->_new
-        ($iNo, $sNm, $iType, $iPrev, $iNext, $iDir, $raTime1st, $raTime2nd, 
-         $iStart, $iSize, $sData, $raChild);
-  }
-  elsif($iType == PpsType_Root) { #ROOT
-    return OLE::Storage_Lite::PPS::Root->_new
-        ($iNo, $sNm, $iType, $iPrev, $iNext, $iDir, $raTime1st, $raTime2nd, 
-         $iStart, $iSize, $sData, $raChild);
-  }
-  else {
-    die "Error PPS:$iType $sNm\n";
-  }
-}
-*/
+    public $No;
+    public $Name;
+    public $Type;
+    public $PrevPps;
+    public $NextPps;
+    public $DirPps;
+    public $Time1st;
+    public $Time2nd;
+    public $StartBlock;
+    public $Size;
+    public $Data;
+    public $Child;
+    public $_PPS_FILE;
 
 // We probably don't need a constructor at all because
 // all derived classed do their own initialization stuff
@@ -78,7 +47,7 @@ function ole_pps($iNo, $sNm, $iType, $iPrev, $iNext, $iDir,
     # _new (OLE::Storage_Lite::PPS)
     #   for OLE::Storage_Lite
     #------------------------------------------------------------------------------
-    function ole_pps($iNo, $sNm, $iType, $iPrev, $iNext, $iDir,
+    public function __construct($iNo, $sNm, $iType, $iPrev, $iNext, $iDir,
                      $raTime1st, $raTime2nd, $iStart, $iSize,
                      $sData=false, $raChild=false) {
 
@@ -102,7 +71,7 @@ function ole_pps($iNo, $sNm, $iType, $iPrev, $iNext, $iDir,
     # _DataLen (OLE::Storage_Lite::PPS)
     # Check for update
     #------------------------------------------------------------------------------
-    function _DataLen() {
+    private function _DataLen() {
         if ($this->Data===false) {
             return 0;
         }
@@ -117,8 +86,8 @@ function ole_pps($iNo, $sNm, $iType, $iPrev, $iNext, $iDir,
     #------------------------------------------------------------------------------
     # _makeSmallData (OLE::Storage_Lite::PPS)
     #------------------------------------------------------------------------------
-    function _makeSmallData(&$aList, $rhInfo) {
-        //my ($sRes);
+    protected function _makeSmallData(&$aList, $rhInfo) {
+        $sRes ="";
         $FILE = $rhInfo->_FILEH_;
         $iSmBlk = 0;
 
@@ -175,7 +144,7 @@ function ole_pps($iNo, $sNm, $iType, $iPrev, $iNext, $iDir,
     #------------------------------------------------------------------------------
     # _savePpsWk (OLE::Storage_Lite::PPS)
     #------------------------------------------------------------------------------
-    function _savePpsWk($rhInfo) {
+    private function _savePpsWk($rhInfo) {
         #1. Write PPS
         $FILE=$rhInfo->_FILEH_;
         fputs($FILE,

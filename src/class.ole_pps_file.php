@@ -29,7 +29,7 @@ require_once "functions.ole.php";
 
 class ole_pps_file extends ole_pps {
 
-    function ole_pps_file($sNm, $sData=false, $sFile=false) {
+    public function __construct($sNm, $sData=false, $sFile=false) {
         $this->No         = false;
         $this->Name       = $sNm;
         $this->Type       = PpsType_File;
@@ -44,10 +44,10 @@ class ole_pps_file extends ole_pps {
         $this->Child      = false;
 
         if ($sFile!==false) {
-            if (is_ressource($sFile)) {
+            if (is_resource($sFile)) {
                 $this->_PPS_FILE=$sFile;
             } elseif ($sFile=="") {
-                $fname=tempnam("php_ole");
+                $fname=tempnam("php_ole","");
                 $this->_PPS_FILE=fopen($fname, "r+b");
             } else {
                 $fname=$sFile;
@@ -61,8 +61,8 @@ class ole_pps_file extends ole_pps {
 
     }
 
-    function append ($sData) {
-        if ($this->_PPS_FILE) {
+    public function append ($sData) {
+        if (isset($this->_PPS_FILE)) {
             fputs($this->_PPS_FILE, $sData);
         } else {
             $this->Data.=$sData;
