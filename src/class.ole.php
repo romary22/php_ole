@@ -86,7 +86,7 @@ public function getNthPps($iNo, $bData=false) {
 #------------------------------------------------------------------------------
 # _initParse: OLE::Storage_Lite
 #------------------------------------------------------------------------------
-private function _initParse($sFile) {
+protected function _initParse($sFile) {
   //$oIo;
 #1. $sFile is a resource (hopefully a file resource)
   if (is_resource($sFile)) {
@@ -106,7 +106,7 @@ private function _initParse($sFile) {
 #------------------------------------------------------------------------------
 # _getPpsTree: OLE::Storage_Lite
 #------------------------------------------------------------------------------
-private function _getPpsTree($iNo, $rhInfo, $bData, &$raDone=false) {
+protected function _getPpsTree($iNo, $rhInfo, $bData, &$raDone=false) {
   if($raDone!==false) {
     if(in_array($iNo, $raDone)) {
       return array();
@@ -144,7 +144,7 @@ private function _getPpsTree($iNo, $rhInfo, $bData, &$raDone=false) {
 #------------------------------------------------------------------------------
 # _getPpsSearch: OLE::Storage_Lite
 #------------------------------------------------------------------------------
-private function _getPpsSearch($iNo, $rhInfo, $raName, $bData, $iCase, &$raDone=false) {
+protected function _getPpsSearch($iNo, $rhInfo, $raName, $bData, $iCase, &$raDone=false) {
   $iRootBlock = $rhInfo->_ROOT_START;
   //my @aRes;
 #1. Check it self
@@ -196,7 +196,7 @@ private function _getPpsSearch($iNo, $rhInfo, $raName, $bData, $iCase, &$raDone=
 #===================================================================
 # Get Header Info (BASE Informain about that file)
 #===================================================================
-private function _getHeaderInfo($FILE) {
+protected function _getHeaderInfo($FILE) {
   //my($iWk);
   $rhInfo = new \stdClass();
   $rhInfo->_FILEH_ = $FILE;
@@ -276,7 +276,7 @@ private function _getHeaderInfo($FILE) {
 #------------------------------------------------------------------------------
 # _getInfoFromFile
 #------------------------------------------------------------------------------
-private function _getInfoFromFile($FILE, $iPos, $iLen, $sFmt) {
+protected function _getInfoFromFile($FILE, $iPos, $iLen, $sFmt) {
   //my($sWk);
   if (!$FILE) {
     return false;
@@ -292,7 +292,7 @@ private function _getInfoFromFile($FILE, $iPos, $iLen, $sFmt) {
 #------------------------------------------------------------------------------
 # _getBbdInfo
 #------------------------------------------------------------------------------
-private function _getBbdInfo($rhInfo) {
+protected function _getBbdInfo($rhInfo) {
   $aBdList = array();
   $iBdbCnt = $rhInfo->_BDB_COUNT;
   //my $iGetCnt;
@@ -345,7 +345,7 @@ private function _getBbdInfo($rhInfo) {
 #------------------------------------------------------------------------------
 # getNthPps (OLE::Storage_Lite)
 #------------------------------------------------------------------------------
-private function _getNthPps($iPos, $rhInfo, $bData) {
+protected function _getNthPps($iPos, $rhInfo, $bData) {
   $iPpsStart = $rhInfo->_ROOT_START;
 
   $iBaseCnt = $rhInfo->_BIG_BLOCK_SIZE / PpsSize;
@@ -409,7 +409,7 @@ private function _getNthPps($iPos, $rhInfo, $bData) {
 #------------------------------------------------------------------------------
 # _setFilePos (OLE::Storage_Lite)
 #------------------------------------------------------------------------------
-private function _setFilePos($iBlock, $iPos, $rhInfo) {
+protected function _setFilePos($iBlock, $iPos, $rhInfo) {
   fseek($rhInfo->_FILEH_, ($iBlock+1)*$rhInfo->_BIG_BLOCK_SIZE+$iPos,
         SEEK_SET);
 }
@@ -417,7 +417,7 @@ private function _setFilePos($iBlock, $iPos, $rhInfo) {
 #------------------------------------------------------------------------------
 # _getNthBlockNo (OLE::Storage_Lite)
 #------------------------------------------------------------------------------
-private function _getNthBlockNo($iStBlock, $iNth, $rhInfo) {
+protected function _getNthBlockNo($iStBlock, $iNth, $rhInfo) {
   //my $iSv;
   $iNext = $iStBlock;
   for ($i=0; $i<$iNth; $i++) {
@@ -433,7 +433,7 @@ private function _getNthBlockNo($iStBlock, $iNth, $rhInfo) {
 #------------------------------------------------------------------------------
 # _getData (OLE::Storage_Lite)
 #------------------------------------------------------------------------------
-private function _getData($iType, $iBlock, $iSize, $rhInfo) {
+protected function _getData($iType, $iBlock, $iSize, $rhInfo) {
   if ($iType == PpsType_File) {
     if($iSize < DataSizeSmall) {
         return $this->_getSmallData($iBlock, $iSize, $rhInfo);
@@ -450,7 +450,7 @@ private function _getData($iType, $iBlock, $iSize, $rhInfo) {
 #------------------------------------------------------------------------------
 # _getBigData (OLE::Storage_Lite)
 #------------------------------------------------------------------------------
-private function _getBigData($iBlock, $iSize, $rhInfo) {
+protected function _getBigData($iBlock, $iSize, $rhInfo) {
   //my($iRest, $sWk, $sRes);
 
   if (!$this->_isNormalBlock($iBlock)) {
@@ -484,7 +484,7 @@ private function _getBigData($iBlock, $iSize, $rhInfo) {
 #------------------------------------------------------------------------------
 # _getNextBlockNo (OLE::Storage_Lite)
 #------------------------------------------------------------------------------
-private function _getNextBlockNo($iBlockNo, $rhInfo) {
+protected function _getNextBlockNo($iBlockNo, $rhInfo) {
   $iRes = $rhInfo->_BBD_INFO[$iBlockNo];
   return ($iRes!==false) ? $iRes : $iBlockNo+1;
 }
@@ -494,14 +494,14 @@ private function _getNextBlockNo($iBlockNo, $rhInfo) {
 # 0xFFFFFFFC : BDList, 0xFFFFFFFD : BBD, 
 # 0xFFFFFFFE: End of Chain 0xFFFFFFFF : unused
 #------------------------------------------------------------------------------
-private function _isNormalBlock($iBlock) {
+protected function _isNormalBlock($iBlock) {
   return ($iBlock < 0xFFFFFFFC) ? 1 : false;
 }
 
 #------------------------------------------------------------------------------
 # _getSmallData (OLE::Storage_Lite)
 #------------------------------------------------------------------------------
-private function _getSmallData($iSmBlock, $iSize, $rhInfo) {
+protected function _getSmallData($iSmBlock, $iSize, $rhInfo) {
   //my($sRes, $sWk);
   $iRest = $iSize;
   $sRes = '';
@@ -519,7 +519,7 @@ private function _getSmallData($iSmBlock, $iSize, $rhInfo) {
 #------------------------------------------------------------------------------
 # _setFilePosSmall(OLE::Storage_Lite)
 #------------------------------------------------------------------------------
-private function _setFilePosSmall($iSmBlock, $rhInfo) {
+protected function _setFilePosSmall($iSmBlock, $rhInfo) {
   $iSmStart = $rhInfo->_SB_START;
   $iBaseCnt = $rhInfo->_BIG_BLOCK_SIZE / $rhInfo->_SMALL_BLOCK_SIZE;
   $iNth = floor($iSmBlock/$iBaseCnt);
@@ -532,7 +532,7 @@ private function _setFilePosSmall($iSmBlock, $rhInfo) {
 #------------------------------------------------------------------------------
 # _getNextSmallBlockNo (OLE::Storage_Lite)
 #------------------------------------------------------------------------------
-private function _getNextSmallBlockNo($iSmBlock, $rhInfo) {
+protected function _getNextSmallBlockNo($iSmBlock, $rhInfo) {
   //my($sWk);
 
   $iBaseCnt = $rhInfo->_BIG_BLOCK_SIZE / LongIntSize;

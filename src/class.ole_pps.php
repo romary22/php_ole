@@ -71,7 +71,7 @@ class ole_pps {
     # _DataLen (OLE::Storage_Lite::PPS)
     # Check for update
     #------------------------------------------------------------------------------
-    private function _DataLen() {
+    protected function _DataLen() {
         if ($this->Data===false) {
             return 0;
         }
@@ -144,7 +144,7 @@ class ole_pps {
     #------------------------------------------------------------------------------
     # _savePpsWk (OLE::Storage_Lite::PPS)
     #------------------------------------------------------------------------------
-    private function _savePpsWk($rhInfo) {
+    protected function _savePpsWk($rhInfo) {
         #1. Write PPS
         $FILE=$rhInfo->_FILEH_;
         fputs($FILE,
