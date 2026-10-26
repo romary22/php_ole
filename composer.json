@@ -17,6 +17,10 @@
             "email": "jonny@1409.org",
             "homepage": "http://www.bettina-attack.de/jonny/projects/php_ole/",
             "role": "Developer"
+        },
+        {
+            "name": "Romary Oswalt",
+            "role": "Developer"
         }
     ],
     "require": {
